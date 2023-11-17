@@ -1,0 +1,113 @@
+Steps to take backup of etcd in /tmp/myback folder.
+1. First we install etcd-client by "sudo apt install etcd-client"
+etcd-client utility is a tool used to interact with etcd cluster
+
+ 
+2. List all the pods of the kube-system namespace
+        "kubectl get pods -n kube-system"
+3. Describe the etcd pod of the kube-system namespace and copy the IP address of the    --advertise-client-url flag
+        "kubectl describe pods etcd-kind-control-plane -n kube-system"
+4.Export the advertise-client-url to advertise_url
+
+            export advertise_url=https://172.18.0.4:2379
+
+            echo $advertise_url
+
+5. Use the below command to save etcd in /tmp/myback
+
+docker cp kind-control-plane:etc/kubernetes/pki/etcd/ca.crt .
+docker cp kind-control-plane:etc/kubernetes/pki/etcd/server.key .
+docker cp kind-control-plane:etc/kubernetes/pki/etcd/server.crt . 
+As i am using kind cluster.Therefore i am copying the certificates from kind-control-plane
+"/etc/kubernete/pki" to current directory ie /home/ubuntu/etcdback/etcd
+
+ 
+
+
+ETCDCTL_API=3 etcdctl \
+--endpoints $advertise_url \
+--cacert /home/ubuntu/etcdback/ca.crt \
+--key /home/ubuntu/etcdback/server.key \
+--cert /home/ubuntu/etcdback/server.crt snapshot save /tmp/myback
+
+6. Use the below command to restore the backup from /tmp/myback
+
+ETCDCTL_API=3 etcdctl \
+--endpoints $advertise_url \
+--cacert /home/ubuntu/etcdback/etcd/ca.crt \
+--key /home/ubuntu/etcdback/etcd/server.key \
+--cert /home/ubuntu/etcdback/etcd/server.crt snapshot restore /tmp/myback
+
+note:- with the above 6 steps we can take backup of etcd in /tmp/myback and also restore that etcd again.
+
+
+
+
+
+7. Now create a namespace named as cep-project2 by using "kubectl create ns cep-project2" 
+
+Now i am creating three pods named as nafees,anwer,india in cep-project2 namespace
+
+k run pod1 --image=nginx --port=80 -n cep-project2 
+k run pod2 --image=nginx --port=80 -n cep-project2
+k run pod3 --image=nginx --port=80 -n cep-project2 
+
+
+
+8. Now creating network policy in such a way so that only the pods in cep-project2 namespace can communicate with each.
+
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-same-namespace
+  namespace: cep-project2
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  - from:
+    - podSelector: {}
+  egress:
+  - to:
+    - podSelector: {}
+
+We can check that all the pods named pod1,pod2,pod3 is talking to each other being in same namespace cep-project2 due to network policy provided.
+
+
+
+
+Steps for upgrading the master node with newest version of kubernetes.
+
+1.update the machine
+ "sudo apt update"
+2.check for the latest version of kubernetes kubeadm
+ "sudo apt-cache madison kubeadm"
+3.check for the latest version of kubectl
+ "sudo apt-cache madison kubectl"
+4.Verifying the current version of Kubernetes
+ "sudo apt update" 
+"sudo apt upgrade"
+
+5. Holding the Kubernetes versions
+"sudo apt-mark hold kubeadm"
+"sudo apt-mark hold kubelet kubectl"
+
+
+6. Upgrading the control plane
+sudo apt-get install -y kubeadm=1.23.4-00 --allow-change-held-packages
+sudo apt-get install -y kubelet=1.23.4-00 kubectl=1.23.4-00 --allow-change-held-packages
+7.Verifying the updated version of Kubernetes
+kubeadm version
+kubectl get nodes
+ 
+
+
+
+
+
+
+ 
+
+ 
