@@ -1,0 +1,66 @@
+STEPS FOLLOWED DURING PROJECT
+
+
+(1) making directory named terraform.
+
+(2) writing hcl file in terraformproject.tf in which i have mentioned the resources and provisioned items in hcl format.
+
+(3) vi terraformproject.tf
+
+          provider "aws" {
+  region     = "ap-northeast-1"
+  access_key = "AKIA4V7KXBF6FJWDPEBC"
+  secret_key = "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"
+}
+
+resource "aws_instance" "web" {
+  ami           = "ami-0d52744d6551d851e"  
+  instance_type = "t2.micro"
+  key_name      = "tf_project"     
+
+  tags = {
+    Name = "terra"
+  }
+}
+
+
+(4) Region i have taken is tokyo.
+(5) Instance type i have taken is t2.micro.
+(6) My key name is tf_project.
+(7) I have mentioned ami is of my ubuntu machine.
+(8) Access key and secret key is also mentioned.
+
+(9) Then i run a command "terraform fmt" to correct the indentation of my hcl file.
+(10) Then i run the command terraform validate.
+(11) Then i run the command terraform init so that all the dependencies get configured.
+(12) Then i apply the provisioning by using command terraform apply.
+(13) After applying, My ec2 instance get created.
+(14) Security group will be taken as default. if mentioned in hcl file then that would be assigned.
+
+
+(15) Then i have taken remote of my machine using putty
+
+(16) Then i have update my machine using "apt update -y"
+(17) Then i have installed java version 11 by using "apt install openjdk-11-jre-headless"
+
+
+(18) Now i have downloaded the jenkins file from internet.
+
+   "curl -fsSL https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key | sudo tee /usr/share/keyrings/jenkins-keyring.asc > /dev/null"
+
+
+   "echo deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc]  https://pkg.jenkins.io/debian-stable binary/ | sudo tee /etc/apt/sources.list.d/jenkins.list > /dev/null" 
+
+(19) Then i have updated my machine "apt update -y"
+
+(20) Then i have installed jenkins "apt install jenkins -y"
+
+(21) Then i checked weather jenkins is running or not "systemctl status jenkins"
+
+(23) Then i installed python3 verified by command "python3 --verion"
+
+(24) Then i open my jenkins on google chrome browser by using public ip "43.207.0.110:8080"
+
+(25) Then i get password from the path specified and get login into my jenkins server.
+
+  
