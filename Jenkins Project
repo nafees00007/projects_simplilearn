@@ -1,0 +1,118 @@
+Steps:
+
+1.Installing java17 and jenkins on aws ec2 ubuntu instance of type t2.medium.Using cloudformation with script cf.jenkins
+
+cf.jenkins:-
+AWSTemplateFormatVersion: 2010-09-09
+Parameters:
+  InstanceTypeParameter:
+    Type: String
+    Default: t2.small
+    Description: Enter instance size. Default is t3a.medium.
+  AMI:
+    Type: String
+    Default: ami-053b0d53c279acc90
+    Description: The Ubuntu AMI to use.
+  Key:
+    Type: String
+    Default: Jenkins-server
+    Description: YOU CAN SAFELY SKIP IT.
+  VPC:
+    Type: String
+    Default: vpc-07e679b7de3c03503
+    Description: Default VPC ID.
+  Subnet:
+    Type: String
+    Default: subnet-0dd71b33f1f982ef0
+    Description: Subnet ID.
+
+Resources:
+  InstanceSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: "JenkinsSecurityGroup"
+      GroupDescription: "Security Group for jenkins server"
+      VpcId: !Ref VPC
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: '22'
+          ToPort: '22'
+          CidrIp:  0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: '8080'
+          ToPort: '8080'
+          CidrIp:  0.0.0.0/0
+      SecurityGroupEgress:
+        - IpProtocol: -1
+          CidrIp: 0.0.0.0/0
+  ElasticIP:
+    Type: AWS::EC2::EIP
+    Properties:
+      Domain: vpc
+      InstanceId: !Ref Server1
+  Server1:
+    Type: 'AWS::EC2::Instance'
+    Properties:
+      ImageId: !Ref AMI
+      InstanceType:
+        Ref: InstanceTypeParameter
+      # KeyName: !Ref Key
+      SubnetId: !Ref Subnet
+      SecurityGroupIds:
+        - Ref: InstanceSecurityGroup
+      BlockDeviceMappings:
+        - DeviceName: /dev/sda1
+          Ebs:
+            VolumeSize: 8
+      UserData:
+        Fn::Base64: !Sub |
+          #!/bin/bash -xe
+          sudo apt-get update -y
+          sudo apt-get install openjdk-17-jdk -y
+          curl -fsSL https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key | sudo tee /usr/share/keyrings/jenkins-keyring.asc > /dev/null
+          echo deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc] https://pkg.jenkins.io/debian-stable binary/ | sudo tee /etc/apt/sources.list.d/jenkins.list > /dev/null
+          sudo apt-get update -y
+          sudo apt-get install jenkins -y
+          sudo systemctl enable jenkins
+          sudo systemctl start jenkins
+      Tags:
+        - Key: Name
+          Value: Server1
+Outputs:
+  PublicIp:
+    Value:
+      Fn::GetAtt:
+        - Server1
+        - PublicIp
+    Description: Server's PublicIp Address
+
+
+2.Now get the Dashboard of jenkins by using InitiAladminPassword.
+
+3.Now install apache tomcat server in machine.
+"mkdir tools"
+"cd tools"
+"wget https://dlcdn.apache.org/maven/maven-3/3.9.4/binaries/apache-maven-3.9.4-bin.zip"
+"apt install unzip"
+"unzip apache-maven-3.9.4-bin.zip"  
+"apt install maven"
+"mvn --version"
+
+4.Now installing Apache tomcat server and verifying it
+
+5.Now we will generate bookzy application from spring
+Go to ​start.​spring.​io/​ and select Maven as the project type. Enter Group and Artifact values and click on Generate.
+
+6.Now make a repository on github and push these appplication code with the help of git.
+
+7.Now install the necessary plugin like maven integration git junit etc which is required.
+
+8.Now create 3 freestyle project named code compilation,deployment,testing.
+9.Now we will create a pipeline of all three jobs on the basis of previous build.
+10.First code compilation will occur,Then testing will be done and the test result is given using junit.
+11.If all the previous two job is stable then it will get deployed.
+12.Now deploy the war file to a Tomcat server, and notify you via email if deployment failed.
+
+
+
+
