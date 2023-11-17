@@ -1,0 +1,66 @@
+(1) First of all i have written a Dockerfile
+
+vi Dockerfile
+  FROM redis:latest
+  WORKDIR /usr/src/app
+  COPY redis.conf /usr/local/etc/redis/redis.conf
+  EXPOSE 8080
+  CMD ["redis-server", "/usr/local/etc/redis/redis.conf"]
+
+
+(2) Then i have build image from Dockerfile
+    docker build -t nafees_redis .
+
+
+(3) Tagging of image with my DockerHub username and name of my image on DockerHub.
+    docker tag redis nafees007/nafees_myredis
+
+(4) Pushing my image to Docker Hub.The name of my image on DockerHub is nafees_myredis
+    docker push nafees007/nafees_myredis
+	
+	
+(5) Pulling my image from DockerHub to my machine is successful
+    docker pull nafees007/nafees_myredis
+
+(6) Now i have setup my K8s cluster using kubeadm init on my master node.
+
+(7) With the help of join command i have setup my k8s cluster
+
+(8) Now i have deploy our application (nafees_app) on k8s cluster using deployment
+    kubectl create deployment nafeesdeploy --image=nafees007/nafees_myredis
+
+
+
+
+................................................................................................................................................................
+
+
+
+  
+   #Dockerfile
+
+  FROM redis:latest
+  WORKDIR /usr/src/app
+  COPY redis.conf /usr/local/etc/redis/redis.conf
+  EXPOSE 8080
+  CMD ["redis-server", "/usr/local/etc/redis/redis.conf"]
+
+docker build -t nafees_redis .
+
+docker tag redis nafees007/nafees_myredis
+
+docker push nafees007/nafees_myredis
+
+docker pull nafees007/nafees_myredis
+
+kubeinit
+
+kubectl apply -f  https://github.com/weaveworks/weave/releases/download/v2.8.1/weave-daemonset-k8s.yaml 
+
+kubectl get no -o wide
+
+kubectl get node
+
+kubectl get po -o wide
+
+kubectl describe po <nameofpod>
