@@ -1,0 +1,79 @@
+Git and Github project by simplilearn
+
+STEPS TO BE FOLLOWED
+
+1. First create folder named Git and Github project folder and initialised that folder into git repo by using git init.
+
+git config --global user.name "nafees"
+git config --global user.email "nafeesanwer007@gmail.com"
+created one file named named india.txt and mark a commit having message first commit.   
+
+2. Now creating two branch named as Hotfix and Integration branch as per the project guideline.
+
+ 
+3. Now create feature1 and feature2 branch under Integration branch.
+checkout to integration by using git checkout integration. 
+and created two branch feature1 and fetaure2 using git branch feature1/feature2 
+
+
+4. Now creating some commit in feature2 branch and merge it into Integration branch.
+now adding some text in india.txt and marking some commit in feature2 and then merge in integration branch.
+It will be the fast forward merge.  
+
+5. As it will be fast forward merge.Now delete the feature2 branch as per the guideline of the project.
+
+
+6. Now commiting some change in feature1 branch and then rebase it in Integration branch.
+Adding some text in india.txt and mark some commit in feature1 branch and then rebase it in integration branch.
+git commit -am "first commit in feature1"
+git checkout integration
+git rebase feature1  
+
+
+7. Now merging integration branch into Hotfix branch
+git checkout hotfix
+git merge integration
+Fast forward merge happen
+
+
+8. Also merging integration branch into production branch.
+git checkout master  (master is my production branch)
+git merge integration
+Fast forward merge happen
+
+
+9. Now commiting some commits in Feature1 branch.
+git checkout feature1
+adding something in india.txt and and marking commit in feature1 
+git commit -am "second commit in feature1"
+
+
+
+10.Now merge this feature1 branch in Integration,Hotfix and Production branch.
+git checkout integration
+git merge feature1
+
+git checkout hotfix
+git merge feature1
+
+git checkout production (main branch is my production branch)
+git merge feature1
+
+
+
+11.Now delete this feature1 branch once the merging is complete.
+git branch -d feature1
+
+
+12.Now commiting some commit in Hotfix branch and merge it into Production as well as Integration branch.
+git checkout hotfix
+Adding some line in india.txt and making commit in hotfix branch
+git commit -am "first commit in hotfix branch"
+
+git checkout master (master is my production branch)
+git merge hotfix
+
+git checkout integration
+git merge hotfix
+
+    
